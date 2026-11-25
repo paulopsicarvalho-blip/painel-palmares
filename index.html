@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AmorSaúde Palmares — Painel Diário Odonto</title>
+  <!-- Google Fonts: Plus Jakarta Sans & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            display: ['Plus Jakarta Sans', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    h1, h2, h3, .font-display {
+      font-family: 'Plus Jakarta Sans', 'sans-serif';
+    }
+    .tabular-nums {
+      font-variant-numeric: tabular-nums;
+    }
+    * {
+      transition: background-color 0.2s ease, border-color 0.2s ease, color 0.15s ease;
+    }
+    /* Modo Print / WhatsApp: largura ideal de 820px centralizada e sem botões de ação */
+    body.print-mode .no-print {
+      display: none !important;
+    }
+    body.print-mode #dashboard-container {
+      max-width: 820px !important;
+      padding: 1rem !important;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 min-h-screen selection:bg-teal-500 selection:text-white">
+
+  <!-- Container Principal -->
+  <div id="dashboard-container" class="max-w-5xl mx-auto px-3 sm:px-6 py-4 sm:py-6 space-y-4 sm:space-y-5">
+
+    <!-- CABEÇALHO & RITMO DO MÊS -->
+    <header class="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl p-4 sm:p-5 shadow-xs">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        
+        <!-- Título da Clínica -->
+        <div class="flex items-center gap-3.5">
+          <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-teal-500 to-sky-600 flex items-center justify-center text-white shadow-sm shrink-0">
+            <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2C9.5 2 7.5 3.5 6 3.5C4 3.5 3 5 3 7.5C3 11 5 13 5.5 16.5C6 19.5 6.8 22 8.2 22C9.5 22 10 19.5 10.5 17.5C10.8 16.3 11.3 15.8 12 15.8C12.7 15.8 13.2 16.3 13.5 17.5C14 19.5 14.5 22 15.8 22C17.2 22 18 19.5 18.5 16.5C19 13 21 11 21 7.5C21 5 20 3.5 18 3.5C16.5 3.5 14.5 2 12 2Z"/>
+            </svg>
+          </div>
+          <div>
+            <div class="flex flex-wrap items-center gap-2">
+              <h1 class="text-lg sm:text-xl font-extrabold tracking-tight text-slate-900 dark:text-white">
+                AmorSaúde Palmares <span class="text-teal-600 dark:text-teal-400">• Odonto</span>
+              </h1>
+              <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200/80 dark:border-slate-700">
+                Ref: <strong id="display-ref-date" class="text-slate-900 dark:text-white">25/11/2026</strong>
+              </span>
+            </div>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+              Painel Diário de Metas e Resultados da Equipe
+            </p>
+          </div>
+        </div>
+
+        <!-- Botões de Ação -->
+        <div class="flex items-center gap-2 self-start sm:self-center">
+          <button onclick="openEditModal()" class="no-print inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 cursor-pointer">
+            <svg class="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            <span>Atualizar Números</span>
+          </button>
+
+          <button id="btn-print-mode" onclick="togglePrintMode()" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-500/10 dark:hover:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-500/30 cursor-pointer">
+            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+            <span id="print-mode-label">Modo Print</span>
+          </button>
+
+          <button id="theme-toggle" onclick="toggleTheme()" aria-label="Alternar tema" class="no-print inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold bg-slate-900 text-white dark:bg-amber-400 dark:text-slate-950 shadow-xs hover:opacity-90 cursor-pointer">
+            <svg class="w-3.5 h-3.5 hidden dark:block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+            <svg class="w-3.5 h-3.5 block dark:hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+            <span id="theme-label">Escuro</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Barra de Ritmo do Mês -->
+      <div class="mt-4 pt-3.5 border-t border-slate-100 dark:border-slate-800">
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+          <div class="flex items-center gap-2 text-xs sm:text-sm text-slate-600 dark:text-slate-300">
+            <span class="font-semibold text-slate-800 dark:text-slate-100">Ritmo do Mês:</span>
+            <span class="tabular-nums">
+              <strong id="display-days-passed">15</strong> de <strong id="display-days-total">19</strong> dias úteis (<strong id="display-time-pace" class="text-sky-600 dark:text-sky-400">78,9%</strong>)
+            </span>
+          </div>
+          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-extrabold bg-amber-100 text-amber-900 dark:bg-amber-500/20 dark:text-amber-300 border border-amber-200/80 dark:border-amber-500/30 tabular-nums">
+            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            <span id="display-days-left">4</span> DIAS ÚTEIS RESTANTES
+          </span>
+        </div>
+        <div class="w-full h-2.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+          <div id="time-progress-bar" class="h-full bg-gradient-to-r from-sky-500 to-teal-500 rounded-full" style="width: 78.95%"></div>
+        </div>
+      </div>
+    </header>
+
+    <!-- SEÇÃO 1: OS 3 PILARES PRINCIPAIS -->
+    <section>
+      <div class="flex items-center justify-between mb-2.5 px-0.5">
+        <h2 class="text-xs font-extrabold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+          1. Resultados Principais da Clínica
+        </h2>
+        <span class="text-[11px] font-medium text-slate-400 dark:text-slate-500">
+          Missão diária calculada para os próximos <span id="sub-days-left">4</span> dias úteis
+        </span>
+      </div>
+
+      <div id="pillars-grid" class="grid grid-cols-1 md:grid-cols-3 gap-3.5 sm:gap-4">
+        <!-- Renderizado via JS -->
+      </div>
+    </section>
+
+    <!-- SEÇÃO 2: ESPECIALIDADES & PRODUTOS (6 CARDS COMPACTOS) -->
+    <section>
+      <div class="flex items-center justify-between mb-2.5 px-0.5">
+        <h2 class="text-xs font-extrabold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+          2. Especialidades & Produtos
+        </h2>
+        <span class="text-[11px] font-medium text-slate-400 dark:text-slate-500">
+          Foco diário por procedimento
+        </span>
+      </div>
+
+      <div id="specialties-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-3.5">
+        <!-- Renderizado via JS -->
+      </div>
+    </section>
+
+    <!-- SEÇÃO 3: EFICIÊNCIA DA AGENDA -->
+    <section id="agenda-section" class="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl p-4 sm:p-5 shadow-xs">
+      <!-- Renderizado via JS -->
+    </section>
+
+  </div>
+
+  <!-- MODAL / DRAWER PARA ATUALIZAR NÚMEROS -->
+  <div id="edit-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/60 backdrop-blur-xs p-3 sm:p-4">
+    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl">
+      <div class="flex items-center justify-between p-4 sm:p-5 border-b border-slate-100 dark:border-slate-800">
+        <div>
+          <h3 class="text-base sm:text-lg font-bold text-slate-900 dark:text-white">Atualizar Números do Painel</h3>
+          <p class="text-xs text-slate-500 dark:text-slate-400">Edite os valores realizados. Projeções e metas diárias são recalculadas na hora.</p>
+        </div>
+        <button onclick="closeEditModal()" class="p-2 rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+
+      <form id="edit-form" onsubmit="saveUpdatedData(event)" class="p-4 sm:p-5 overflow-y-auto space-y-4 text-sm">
+        <!-- Calendário -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">Data de Referência</label>
+            <input type="text" id="inp-ref-date" class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white" required>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">Dias Úteis Passados</label>
+            <input type="number" id="inp-days-passed" min="1" max="31" class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white" required>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">Total Dias Úteis Mês</label>
+            <input type="number" id="inp-days-total" min="1" max="31" class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white" required>
+          </div>
+        </div>
+
+        <!-- 3 Pilares -->
+        <div class="border-t border-slate-100 dark:border-slate-800 pt-3">
+          <h4 class="text-xs font-bold uppercase tracking-wider text-teal-600 dark:text-teal-400 mb-2">1. Pilares Principais (Realizado)</h4>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">Caixa Realizado (R$)</label>
+              <input type="number" step="0.01" id="inp-caixa" class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white" required>
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">Efetivação Realizada (R$)</label>
+              <input type="number" step="0.01" id="inp-efetivacao" class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white" required>
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">Captação (Pacientes)</label>
+              <input type="number" step="1" id="inp-captacao" class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white" required>
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">Captação / Cadeira</label>
+              <input type="number" step="0.1" id="inp-cap-cadeira" class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white" required>
+            </div>
+          </div>
+        </div>
+
+        <!-- 6 Especialidades -->
+        <div class="border-t border-slate-100 dark:border-slate-800 pt-3">
+          <h4 class="text-xs font-bold uppercase tracking-wider text-sky-600 dark:text-sky-400 mb-2">2. Especialidades & Produtos (Realizado)</h4>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">Plano Odontológico (Qtd)</label>
+              <input type="number" step="1" id="inp-plano" class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white" required>
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">Venda de Orto (Qtd)</label>
+              <input type="number" step="1" id="inp-orto" class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white" required>
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">Siso (Qtd)</label>
+              <input type="number" step="1" id="inp-siso" class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white" required>
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">Clareamento (Qtd)</label>
+              <input type="number" step="1" id="inp-clareamento" class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white" required>
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">Prótese (R$)</label>
+              <input type="number" step="0.01" id="inp-protese" class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white" required>
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">Implante (R$)</label>
+              <input type="number" step="0.01" id="inp-implante" class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white" required>
+            </div>
+          </div>
+        </div>
+
+        <!-- Agenda -->
+        <div class="border-t border-slate-100 dark:border-slate-800 pt-3">
+          <h4 class="text-xs font-bold uppercase tracking-wider text-indigo-600 dark:text-indigo-400 mb-2">3. Eficiência da Agenda</h4>
+          <div class="max-w-xs">
+            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">Ranking Agenda Atual (%)</label>
+            <input type="number" step="0.01" id="inp-agenda" class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white" required>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between pt-4 border-t border-slate-100 dark:border-slate-800">
+          <button type="button" onclick="resetDefaultData()" class="text-xs font-semibold text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 underline cursor-pointer">
+            Restaurar dados de 25/11/2026
+          </button>
+          <div class="flex items-center gap-2">
+            <button type="button" onclick="closeEditModal()" class="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 cursor-pointer">
+              Cancelar
+            </button>
+            <button type="submit" class="px-4 py-2 rounded-xl text-xs font-bold bg-teal-600 hover:bg-teal-700 text-white shadow-xs cursor-pointer">
+              Aplicar no Painel
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const INITIAL_DATA = {
+      refDate: "25/11/2026",
+      daysTotal: 19,
+      daysPassed: 15,
+      pillars: [
+        {
+          id: "caixa",
+          title: "CAIXA",
+          subtitle: "Financeiro",
+          isCurrency: true,
+          unit: "",
+          meta: 58500.00,
+          realizado: 38461.51,
+          metaDiaria: 5009.62,
+          projecao: 48717.91,
+          customStatus: "No Ritmo / Perto da Meta",
+          decimals: 2
+        },
+        {
+          id: "efetivacao",
+          title: "EFETIVAÇÃO",
+          subtitle: "Vendas Fechadas",
+          isCurrency: true,
+          unit: "",
+          meta: 90000.00,
+          realizado: 26076.62,
+          metaDiaria: 15980.85,
+          projecao: 33030.39,
+          customStatus: "Atenção / Acelerar",
+          decimals: 2
+        },
+        {
+          id: "captacao",
+          title: "CAPTAÇÃO",
+          subtitle: "Novos Pacientes",
+          isCurrency: false,
+          unit: "pacientes",
+          meta: 110,
+          realizado: 48,
+          metaDiaria: 15.50,
+          projecao: 61,
+          decimals: 0,
+          extraFooter: {
+            label: "Captação / Cadeira",
+            realizado: 12,
+            meta: 28,
+            metaDiaria: 3.88,
+            projecao: 15
+          }
+        }
+      ],
+      specialties: [
+        {
+          id: "plano",
+          title: "Plano Odontológico",
+          isCurrency: false,
+          meta: 40,
+          realizado: 18,
+          metaDiaria: 5.50,
+          projecao: 23,
+          pctDecimals: 0
+        },
+        {
+          id: "orto",
+          title: "Venda de Orto",
+          isCurrency: false,
+          meta: 25,
+          realizado: 10,
+          metaDiaria: 3.80,
+          projecao: 13,
+          pctDecimals: 0
+        },
+        {
+          id: "siso",
+          title: "Siso",
+          isCurrency: false,
+          meta: 8,
+          realizado: 3,
+          metaDiaria: 1.25,
+          projecao: 4,
+          pctDecimals: 1
+        },
+        {
+          id: "clareamento",
+          title: "Clareamento",
+          isCurrency: false,
+          meta: 10,
+          realizado: 3,
+          metaDiaria: 1.75,
+          projecao: 4,
+          pctDecimals: 0
+        },
+        {
+          id: "protese",
+          title: "Prótese",
+          isCurrency: true,
+          meta: 5800.00,
+          realizado: 0.00,
+          metaDiaria: 1450.00,
+          projecao: 0.00,
+          pctDecimals: 0
+        },
+        {
+          id: "implante",
+          title: "Implante",
+          isCurrency: true,
+          meta: 5000.00,
+          realizado: 0.00,
+          metaDiaria: 1250.00,
+          projecao: 0.00,
+          pctDecimals: 0
+        }
+      ],
+      agenda: {
+        realizado: 53.88,
+        meta: 45.00
+      }
+    };
+
+    let state = JSON.parse(JSON.stringify(INITIAL_DATA));
+
+    function formatBRL(val) {
+      return val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    }
+
+    function formatNum(val, decimals = 0) {
+      return val.toLocaleString('pt-BR', {
+        minimumFractionDigits: decimals,
+        maximumFractionDigits: decimals
+      });
+    }
+
+    function formatPct(val, decimals = 1) {
+      return val.toLocaleString('pt-BR', {
+        minimumFractionDigits: decimals,
+        maximumFractionDigits: decimals
+      }) + '%';
+    }
+
+    function getSemanticStyle(projPct, customLabel = null) {
+      if (projPct >= 85) {
+        return {
+          label: customLabel || "No Ritmo",
+          badge: "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-500/15 dark:text-emerald-300 dark:border-emerald-500/30",
+          bar: "bg-emerald-500",
+          accentBorder: "border-t-emerald-500"
+        };
+      }
+      if (projPct >= 60) {
+        return {
+          label: customLabel || "Atenção",
+          badge: "bg-amber-50 text-amber-800 border-amber-200 dark:bg-amber-500/15 dark:text-amber-300 dark:border-amber-500/30",
+          bar: "bg-amber-500",
+          accentBorder: "border-t-amber-500"
+        };
+      }
+      return {
+        label: customLabel || "Foco Total",
+        badge: "bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-500/15 dark:text-rose-300 dark:border-rose-500/30",
+        bar: "bg-rose-500",
+        accentBorder: "border-t-rose-500"
+      };
+    }
+
+    function renderDashboard() {
+      const daysLeft = Math.max(0, state.daysTotal - state.daysPassed);
+      const timePacePct = (state.daysPassed / state.daysTotal) * 100;
+
+      document.getElementById('display-ref-date').textContent = state.refDate;
+      document.getElementById('display-days-passed').textContent = state.daysPassed;
+      document.getElementById('display-days-total').textContent = state.daysTotal;
+      document.getElementById('display-time-pace').textContent = formatPct(timePacePct, 1);
+      document.getElementById('display-days-left').textContent = daysLeft;
+      document.getElementById('sub-days-left').textContent = daysLeft;
+      document.getElementById('time-progress-bar').style.width = `${Math.min(100, timePacePct)}%`;
+
+      const pillarsGrid = document.getElementById('pillars-grid');
+      pillarsGrid.innerHTML = state.pillars.map(p => {
+        const pct = (p.realizado / p.meta) * 100;
+        const projPct = (p.projecao / p.meta) * 100;
+        const style = getSemanticStyle(projPct, p.customStatus);
+
+        const realStr = p.isCurrency
+          ? formatBRL(p.realizado)
+          : `${formatNum(p.realizado, p.decimals)} <span class="text-sm font-semibold text-slate-500 dark:text-slate-400">${p.unit}</span>`;
+
+        const metaStr = p.isCurrency
+          ? formatBRL(p.meta)
+          : `${formatNum(p.meta, 0)} ${p.unit}`;
+
+        const projStr = p.isCurrency
+          ? formatBRL(p.projecao)
+          : `${formatNum(p.projecao, 0)} ${p.unit}`;
+
+        const diariaMain = p.isCurrency
+          ? `${formatBRL(p.metaDiaria)} / dia`
+          : `${formatNum(p.metaDiaria, 2)} / dia`;
+
+        const diariaApprox = !p.isCurrency
+          ? ` <span class="text-xs font-semibold opacity-80">(≈ ${Math.round(p.metaDiaria)}/dia)</span>`
+          : '';
+
+        const extraFooterHtml = p.extraFooter ? `
+          <div class="mt-3 pt-2.5 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 tabular-nums">
+            <span>${p.extraFooter.label}: <strong class="text-slate-700 dark:text-slate-200">${formatNum(p.extraFooter.realizado, 2)}</strong> / ${p.extraFooter.meta}</span>
+            <span>Missão: <strong class="text-sky-600 dark:text-sky-400">${formatNum(p.extraFooter.metaDiaria, 2)}/dia</strong> • Proj: <strong class="text-slate-700 dark:text-slate-200">${formatNum(p.extraFooter.projecao, 0)}</strong></span>
+          </div>
+        ` : '';
+
+        return `
+          <div class="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 border-t-4 ${style.accentBorder} rounded-2xl p-4 sm:p-5 shadow-xs flex flex-col justify-between">
+            <div>
+              <div class="flex items-start justify-between gap-2 mb-3">
+                <div>
+                  <h3 class="text-base font-extrabold tracking-tight text-slate-900 dark:text-white">${p.title}</h3>
+                  <p class="text-xs font-medium text-slate-500 dark:text-slate-400">${p.subtitle}</p>
+                </div>
+                <span class="px-2.5 py-1 rounded-full text-[11px] font-bold border ${style.badge} shrink-0">
+                  ${style.label}
+                </span>
+              </div>
+
+              <div class="my-2">
+                <div class="text-2xl sm:text-[26px] font-extrabold text-slate-900 dark:text-white tabular-nums leading-tight">
+                  ${realStr}
+                </div>
+                <div class="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 mt-1 tabular-nums">
+                  <span>Meta: <strong class="text-slate-700 dark:text-slate-300">${metaStr}</strong></span>
+                  <span class="font-bold text-slate-700 dark:text-slate-200">${formatPct(pct, 1)} atingido</span>
+                </div>
+              </div>
+
+              <div class="w-full h-2.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden my-3">
+                <div class="${style.bar} h-full rounded-full" style="width: ${Math.min(100, pct)}%"></div>
+              </div>
+            </div>
+
+            <div>
+              <div class="rounded-xl bg-sky-50/80 dark:bg-sky-950/40 border border-sky-200/70 dark:border-sky-800/50 px-3.5 py-2.5 flex items-center justify-between">
+                <span class="text-xs font-bold text-sky-900 dark:text-sky-300">Missão Diária:</span>
+                <span class="text-sm sm:text-base font-extrabold text-sky-700 dark:text-sky-300 tabular-nums">
+                  ${diariaMain}${diariaApprox}
+                </span>
+              </div>
+
+              <div class="mt-2.5 flex items-center justify-between text-xs px-1 tabular-nums">
+                <span class="text-slate-500 dark:text-slate-400">Projeção fechamento:</span>
+                <span class="font-bold text-slate-800 dark:text-slate-200">
+                  ${projStr} <span class="text-slate-500 dark:text-slate-400 font-semibold">(${formatPct(projPct, 1)})</span>
+                </span>
+              </div>
+
+              ${extraFooterHtml}
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      const specGrid = document.getElementById('specialties-grid');
+      specGrid.innerHTML = state.specialties.map(s => {
+        const pct = (s.realizado / s.meta) * 100;
+        const projPct = (s.projecao / s.meta) * 100;
+        const style = getSemanticStyle(projPct);
+
+        const realStr = s.isCurrency ? formatBRL(s.realizado) : formatNum(s.realizado, 0);
+        const metaStr = s.isCurrency ? formatBRL(s.meta) : formatNum(s.meta, 0);
+        const diariaStr = s.isCurrency ? `${formatBRL(s.metaDiaria)}/dia` : `${formatNum(s.metaDiaria, 2)}/dia`;
+        const projStr = s.isCurrency ? formatBRL(s.projecao) : formatNum(s.projecao, 0);
+
+        return `
+          <div class="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl p-4 shadow-xs flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between gap-2 mb-2">
+                <h3 class="text-sm font-bold text-slate-800 dark:text-slate-100">${s.title}</h3>
+                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold border ${style.badge}">
+                  ${formatPct(pct, s.pctDecimals)}
+                </span>
+              </div>
+
+              <div class="flex items-baseline justify-between gap-2 tabular-nums">
+                <span class="text-lg font-extrabold text-slate-900 dark:text-white">${realStr}</span>
+                <span class="text-xs font-medium text-slate-500 dark:text-slate-400">de ${metaStr}</span>
+              </div>
+
+              <div class="w-full h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden my-2.5">
+                <div class="${style.bar} h-full rounded-full" style="width: ${Math.min(100, pct)}%"></div>
+              </div>
+            </div>
+
+            <div class="pt-2.5 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs tabular-nums">
+              <div class="bg-sky-50 dark:bg-sky-950/50 text-sky-700 dark:text-sky-300 px-2.5 py-1 rounded-lg font-extrabold">
+                Meta: ${diariaStr}
+              </div>
+              <div class="text-slate-500 dark:text-slate-400">
+                Proj: <strong class="text-slate-800 dark:text-slate-200">${projStr}</strong>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      const ag = state.agenda;
+      const agRatio = (ag.realizado / ag.meta) * 100;
+      const diffPoints = Math.max(0, ag.meta - ag.realizado);
+      const isAgendaMet = ag.realizado >= ag.meta;
+
+      document.getElementById('agenda-section').innerHTML = `
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-500/15 text-indigo-600 dark:text-indigo-400 flex items-center justify-center shrink-0">
+              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><path d="M9 16l2 2 4-4"/></svg>
+            </div>
+            <div>
+              <div class="flex items-center gap-2">
+                <h2 class="text-sm sm:text-base font-extrabold text-slate-900 dark:text-white">Ranking Agenda (Eficiência)</h2>
+                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold border ${isAgendaMet ? 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-500/15 dark:text-emerald-300' : 'bg-amber-50 text-amber-800 border-amber-200 dark:bg-amber-500/15 dark:text-amber-300 dark:border-amber-500/30'}">
+                  ${isAgendaMet ? 'Meta Batida' : `Faltam ${formatNum(diffPoints, 2)} p.p.`}
+                </span>
+              </div>
+              <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5 tabular-nums">
+                Atual: <strong class="text-slate-900 dark:text-white">${formatPct(ag.realizado, 2)}</strong> vs. Meta de <strong class="text-slate-700 dark:text-slate-300">${formatPct(ag.meta, 2)}</strong>
+                ${!isAgendaMet ? `(Faltam ${formatNum(diffPoints, 2)} pontos percentuais para bater a meta)` : '(Meta atingida com sucesso!)'}
+              </p>
+            </div>
+          </div>
+
+          <div class="w-full sm:w-64 shrink-0">
+            <div class="flex justify-between text-[11px] font-bold mb-1 tabular-nums">
+              <span class="text-indigo-600 dark:text-indigo-400">${formatPct(ag.realizado, 2)}</span>
+              <span class="text-slate-400">Meta: ${formatPct(ag.meta, 2)}</span>
+            </div>
+            <div class="w-full h-2.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+              <div class="${isAgendaMet ? 'bg-emerald-500' : 'bg-indigo-500'} h-full rounded-full" style="width: ${Math.min(100, agRatio)}%"></div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function toggleTheme() {
+      const isDark = document.documentElement.classList.toggle('dark');
+      document.getElementById('theme-label').textContent = isDark ? 'Claro' : 'Escuro';
+    }
+
+    function togglePrintMode() {
+      const isPrint = document.body.classList.toggle('print-mode');
+      document.getElementById('print-mode-label').textContent = isPrint ? 'Sair Modo Print' : 'Modo Print';
+    }
+
+    function openEditModal() {
+      document.getElementById('inp-ref-date').value = state.refDate;
+      document.getElementById('inp-days-passed').value = state.daysPassed;
+      document.getElementById('inp-days-total').value = state.daysTotal;
+
+      document.getElementById('inp-caixa').value = state.pillars.find(p => p.id === 'caixa').realizado;
+      document.getElementById('inp-efetivacao').value = state.pillars.find(p => p.id === 'efetivacao').realizado;
+      const cap = state.pillars.find(p => p.id === 'captacao');
+      document.getElementById('inp-captacao').value = cap.realizado;
+      document.getElementById('inp-cap-cadeira').value = cap.extraFooter.realizado;
+
+      document.getElementById('inp-plano').value = state.specialties.find(s => s.id === 'plano').realizado;
+      document.getElementById('inp-orto').value = state.specialties.find(s => s.id === 'orto').realizado;
+      document.getElementById('inp-siso').value = state.specialties.find(s => s.id === 'siso').realizado;
+      document.getElementById('inp-clareamento').value = state.specialties.find(s => s.id === 'clareamento').realizado;
+      document.getElementById('inp-protese').value = state.specialties.find(s => s.id === 'protese').realizado;
+      document.getElementById('inp-implante').value = state.specialties.find(s => s.id === 'implante').realizado;
+
+      document.getElementById('inp-agenda').value = state.agenda.realizado;
+
+      const modal = document.getElementById('edit-modal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeEditModal() {
+      const modal = document.getElementById('edit-modal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function saveUpdatedData(e) {
+      e.preventDefault();
+
+      const daysPassed = Math.max(1, parseInt(document.getElementById('inp-days-passed').value, 10) || 15);
+      const daysTotal = Math.max(daysPassed, parseInt(document.getElementById('inp-days-total').value, 10) || 19);
+      const daysLeft = Math.max(1, daysTotal - daysPassed);
+
+      state.refDate = document.getElementById('inp-ref-date').value;
+      state.daysPassed = daysPassed;
+      state.daysTotal = daysTotal;
+
+      const pillarInputs = {
+        caixa: parseFloat(document.getElementById('inp-caixa').value) || 0,
+        efetivacao: parseFloat(document.getElementById('inp-efetivacao').value) || 0,
+        captacao: parseFloat(document.getElementById('inp-captacao').value) || 0
+      };
+
+      state.pillars.forEach(p => {
+        p.realizado = pillarInputs[p.id];
+        p.projecao = (p.realizado / daysPassed) * daysTotal;
+        p.metaDiaria = Math.max(0, p.meta - p.realizado) / daysLeft;
+        p.customStatus = null;
+      });
+
+      const cap = state.pillars.find(p => p.id === 'captacao');
+      const capCadReal = parseFloat(document.getElementById('inp-cap-cadeira').value) || 0;
+      cap.extraFooter.realizado = capCadReal;
+      cap.extraFooter.projecao = (capCadReal / daysPassed) * daysTotal;
+      cap.extraFooter.metaDiaria = Math.max(0, cap.extraFooter.meta - capCadReal) / daysLeft;
+
+      const specInputs = {
+        plano: parseFloat(document.getElementById('inp-plano').value) || 0,
+        orto: parseFloat(document.getElementById('inp-orto').value) || 0,
+        siso: parseFloat(document.getElementById('inp-siso').value) || 0,
+        clareamento: parseFloat(document.getElementById('inp-clareamento').value) || 0,
+        protese: parseFloat(document.getElementById('inp-protese').value) || 0,
+        implante: parseFloat(document.getElementById('inp-implante').value) || 0
+      };
+
+      state.specialties.forEach(s => {
+        s.realizado = specInputs[s.id];
+        s.projecao = (s.realizado / daysPassed) * daysTotal;
+        s.metaDiaria = Math.max(0, s.meta - s.realizado) / daysLeft;
+      });
+
+      state.agenda.realizado = parseFloat(document.getElementById('inp-agenda').value) || 0;
+
+      renderDashboard();
+      closeEditModal();
+    }
+
+    function resetDefaultData() {
+      state = JSON.parse(JSON.stringify(INITIAL_DATA));
+      renderDashboard();
+      closeEditModal();
+    }
+
+    window.addEventListener('DOMContentLoaded', renderDashboard);
+  </script>
+</body>
+</html>

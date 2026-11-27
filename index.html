@@ -69,7 +69,7 @@
                 AmorSaúde Palmares <span class="text-teal-600 dark:text-teal-400">• Odonto</span>
               </h1>
               <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200/80 dark:border-slate-700">
-                Ref: <strong id="display-ref-date" class="text-slate-900 dark:text-white">26/11/2026</strong>
+                Ref: <strong id="display-ref-date" class="text-slate-900 dark:text-white">27/11/2026</strong>
               </span>
             </div>
             <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
@@ -99,16 +99,16 @@
           <div class="flex items-center gap-2 text-xs sm:text-sm text-slate-600 dark:text-slate-300">
             <span class="font-semibold text-slate-800 dark:text-slate-100">Ritmo do Mês:</span>
             <span class="tabular-nums">
-              <strong id="display-days-passed">16</strong> de <strong id="display-days-total">19</strong> dias úteis (<strong id="display-time-pace" class="text-sky-600 dark:text-sky-400">84,2%</strong>)
+              <strong id="display-days-passed">15</strong> de <strong id="display-days-total">19</strong> dias úteis (<strong id="display-time-pace" class="text-sky-600 dark:text-sky-400">78,9%</strong>)
             </span>
           </div>
           <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-extrabold bg-amber-100 text-amber-900 dark:bg-amber-500/20 dark:text-amber-300 border border-amber-200/80 dark:border-amber-500/30 tabular-nums">
             <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-            <span id="display-days-left">3</span> DIAS ÚTEIS RESTANTES
+            <span id="display-days-left">2</span> DIAS ÚTEIS RESTANTES
           </span>
         </div>
         <div class="w-full h-2.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
-          <div id="time-progress-bar" class="h-full bg-gradient-to-r from-sky-500 to-teal-500 rounded-full" style="width: 84.21%"></div>
+          <div id="time-progress-bar" class="h-full bg-gradient-to-r from-sky-500 to-teal-500 rounded-full" style="width: 78.95%"></div>
         </div>
       </div>
     </header>
@@ -120,7 +120,7 @@
           1. Resultados Principais da Clínica
         </h2>
         <span class="text-[11px] font-medium text-slate-400 dark:text-slate-500">
-          Missão diária calculada para os próximos <span id="sub-days-left">3</span> dias úteis
+          Missão diária calculada para os próximos <span id="sub-days-left">2</span> dias úteis
         </span>
       </div>
 
@@ -154,12 +154,12 @@
 
   <script>
     // =========================================================================
-    // DADOS EXATOS DA PLANILHA INDICADORES ODONTO PALMARES (REFERÊNCIA: 26/11/2026)
+    // DADOS EXATOS DA PLANILHA INDICADORES ODONTO PALMARES (REFERÊNCIA: 27/11/2026)
     // =========================================================================
     const INITIAL_DATA = {
-      refDate: "26/11/2026",
+      refDate: "27/11/2026",
       daysTotal: 19,
-      daysPassed: 16,
+      daysPassed: 15,
       pillars: [
         {
           id: "caixa",
@@ -169,8 +169,8 @@
           unit: "",
           meta: 58500.00,
           realizado: 39477.93,
-          metaDiaria: 6340.69,
-          projecao: 46880.04,
+          metaDiaria: 9511.04,
+          projecao: 44122.39,
           customStatus: "Atenção / Acelerar",
           decimals: 2
         },
@@ -181,9 +181,9 @@
           isCurrency: true,
           unit: "",
           meta: 90000.00,
-          realizado: 31133.96,
-          metaDiaria: 19622.01,
-          projecao: 36971.58,
+          realizado: 32836.86,
+          metaDiaria: 28581.57,
+          projecao: 36700.02,
           customStatus: "Foco Total",
           decimals: 2
         },
@@ -194,15 +194,15 @@
           isCurrency: false,
           unit: "pacientes",
           meta: 110,
-          realizado: 52,
-          metaDiaria: 19.33,
-          projecao: 62,
+          realizado: 55,
+          metaDiaria: 27.50,
+          projecao: 61,
           decimals: 0,
           extraFooter: {
             label: "Captação / Cadeira",
-            realizado: 13,
+            realizado: 13.75,
             meta: 28,
-            metaDiaria: 4.83,
+            metaDiaria: 6.88,
             projecao: 15
           }
         }
@@ -214,8 +214,8 @@
           isCurrency: false,
           meta: 40,
           realizado: 21,
-          metaDiaria: 6.33,
-          projecao: 25,
+          metaDiaria: 9.50,
+          projecao: 23,
           pctDecimals: 0
         },
         {
@@ -223,8 +223,8 @@
           title: "Venda de Orto",
           isCurrency: false,
           meta: 25,
-          realizado: 11,
-          metaDiaria: 4.70,
+          realizado: 12,
+          metaDiaria: 6.50,
           projecao: 13,
           pctDecimals: 0
         },
@@ -233,9 +233,9 @@
           title: "Siso",
           isCurrency: false,
           meta: 8,
-          realizado: 5,
-          metaDiaria: 1.00,
-          projecao: 6,
+          realizado: 6,
+          metaDiaria: 1.50,
+          projecao: 7,
           pctDecimals: 1
         },
         {
@@ -244,8 +244,8 @@
           isCurrency: false,
           meta: 10,
           realizado: 3,
-          metaDiaria: 2.33,
-          projecao: 4,
+          metaDiaria: 3.50,
+          projecao: 3,
           pctDecimals: 0
         },
         {
@@ -254,7 +254,7 @@
           isCurrency: true,
           meta: 5800.00,
           realizado: 0.00,
-          metaDiaria: 1933.33,
+          metaDiaria: 2900.00,
           projecao: 0.00,
           pctDecimals: 0
         },
@@ -264,13 +264,13 @@
           isCurrency: true,
           meta: 5000.00,
           realizado: 0.00,
-          metaDiaria: 1666.67,
+          metaDiaria: 2500.00,
           projecao: 0.00,
           pctDecimals: 0
         }
       ],
       agenda: {
-        realizado: 54.34,
+        realizado: 64.71,
         meta: 45.00
       }
     };
